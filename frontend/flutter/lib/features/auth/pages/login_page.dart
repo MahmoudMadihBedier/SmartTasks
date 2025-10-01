@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodels/auth_viewmodel.dart';
+import '../../models/user.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -15,17 +16,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   bool _loading = false;
 
   @override
+  void dispose() {
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
 
-    ref.listen<AsyncValue>((authViewModelProvider), (previous, next) {
-      if (next is AsyncData) {
-        if (next.value != null) {
-          Navigator.pushReplacementNamed(context, '/projects');
-        }
+    ref.listen<AsyncValue<User?>>(authViewModelProvider, (previous, next) {
+      // navigate to projects when login produces a non-null user
+      if (next is AsyncData<User?> && next.value != null) {
+        Navigator.pushReplacementNamed(context, '/projects');
       } else if (next is AsyncError) {
-        final error = next.error;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login failed: ${error.toString()}')));
+        final err = next.error;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login failed: ${err.toString()}')));
       }
     });
 
@@ -36,11 +43,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         child: Column(
           children: [
             TextField(
+              key: const Key('email_field'),
               controller: _emailCtrl,
               decoration: const InputDecoration(labelText: 'Email'),
               keyboardType: TextInputType.emailAddress,
             ),
             TextField(
+              key: const Key('password_field'),
               controller: _passCtrl,
               decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
@@ -54,11 +63,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       await ref.read(authViewModelProvider.notifier).login(_emailCtrl.text.trim(), _passCtrl.text.trim());
                       setState(() => _loading = false);
                     },
-              child: _loading ? const CircularProgressIndicator() : const Text('Login'),
+              child: _loading ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Login'),
             ),
             TextButton(
               onPressed: () {
-                // TODO: route to register page
+                // TODO: push register page when implemented
               },
               child: const Text('Register'),
             ),
