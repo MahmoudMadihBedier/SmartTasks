@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/auth_repository.dart';
-import '../../models/user.dart';
+import '../../../models/user.dart';
+import '../../../core/di.dart';
 
 final authViewModelProvider =
     StateNotifierProvider<AuthViewModel, AsyncValue<User?>>((ref) {
