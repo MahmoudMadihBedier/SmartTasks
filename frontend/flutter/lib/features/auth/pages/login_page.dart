@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodels/auth_viewmodel.dart';
-import '../../models/user.dart';
+import '../../../models/user.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
