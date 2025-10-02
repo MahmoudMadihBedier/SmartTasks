@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../repositories/project_repository.dart';
-import '../../../models/project.dart';
 import '../../../core/di.dart';
+
+import '../../models/project.dart';
 
 final projectsProvider = FutureProvider.autoDispose<List<Project>>((ref) async {
   final repo = ref.read(projectRepositoryProvider);
